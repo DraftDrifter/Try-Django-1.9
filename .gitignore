@@ -1,0 +1,17 @@
+*.pyc
+*~
+__pycache__
+myvenv
+db.sqlite3
+/static
+.DS_Store
+.atom/
+Lib
+Include
+Scripts
+tcl
+.vscode
+pip-selfcheck.json
+src/static/ckeditor
+static_cdn/ckeditor
+static_cdn/admin

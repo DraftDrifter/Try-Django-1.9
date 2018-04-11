@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load urlify %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{{ instance.title }} | {{ block.super }}{% endblock %}
+
+{% block post_detail_link %}
+<li class="breadcrumb-item active" aria-current="page">{{ instance.title }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+
+
+<div class="col-sm-7 mx-auto">
+    {% if instance.image %}
+      <img src="{{ instance.image.url }}" class="img-fluid">
+    {% endif %}
+    <h1 style="line-height:80%; margin-top: 0.5em;">{{instance.title}}{% if request.user == instance.user %}<h3 style="color:red">Your Post</h3>{% endif %}{% if instance.published > today %}<h3 style="color:red;">Future Post</h3>{% endif %}{% if instance.draft %}
+      <h3 style="color:red;">Draft</h3>{% endif %}<br><small class="timestamp">{{instance.published}}</small></h1> <br>
+    {% if instance.user.get_full_name %}
+    <p>Author: {{ instance.user.get_full_name }}</p>
+    {% else %}
+    <p>Author: {{ instance.user.username }}</p>
+    {% endif %}
+    <p>Read Time: {% if instance.read_time <= 1 %} < 1 Minute {% else %}{{ instance.read_time }} minutes</p>{% endif %}
+    <p><div class="fb-like" data-href="{{ request.build.get_absolute_url }}" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div></p>
+
+    <!--<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build.get_absolute_url }}">
+    Share on Facebook</a>-->
+    <a href="https://twitter.com/home?status={{ instance.content|truncatechars:80|urlify }}%20{{ request.build.get_absolute_url }}">
+    Share on Twitter</a> |
+    <a href='https://plus.google.com/share?url={{ request.build.get_absolute_url }}'>Share on Google+</a>
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build.get_absolute_url }}&title={{ instance.title }}&summary={{ instance.content|truncatechars:80|urlify }}&source={{ request.build.get_absolute_url }}"></a> |
+    <a href="http://www.reddit.com/submit?url={{ request.build.get_absolute_url }}&title={{ instance.content|truncatechars:80|urlify }}">Share on Reddit</a><br>
+    <hr>
+    <div class="row">
+
+
+      <div class="content-image">
+          {{instance.content|safe}}<br>
+      </div>
+    </div>
+    <hr>
+    <br>
+    <div class="">
+      <p class="lead">Comments:</p>
+      {% if request.user.is_authenticated %}
+      <form class="" action="." method="post">{% csrf_token %}
+        {{ comment_form|crispy }}
+        <input type="submit" name="" value="Post comment" class="btn">
+      </form>
+      {% else %}
+      <p class="login-required">You must login to comment.</p>
+      {% endif %}
+      <hr>
+      {% for comment in comments %}
+
+      <blockquote class="blockquote">
+        <p class="mb-0">{{ comment.content }}</p>
+        <footer class="blockquote-footer">via {{ comment.user }} | {{ comment.timestamp|timesince }} ago |
+          {% if comment.children.count > 0 %}{{ comment.children.count }}
+          {% if comment.children.count > 1%} Replies | {% else %} Reply | {% endif %}{% endif %}
+          <a href="#"class="comment-reply-btn">Reply</a> | <a class="" href="{{ comment.get_absolute_url }}">Thread</a>{% if request.user == comment.user %} <a href="{{ comment.get_delete_url}}"> | Delete</a> {% endif %}</footer>
+
+        <div class="comment-reply">
+
+        {% for child_comment in comment.children %}
+          <blockquote style="text-indent:5%;"class="blockquote">
+          <p class="mb-0">{{ child_comment.content }}</p>
+          <footer class="blockquote-footer">via {{ child_comment.user }} | {{ child_comment.timestamp|timesince }} ago</footer>
+          </blockquote>
+        {% endfor %}
+        {% if request.user.is_authenticated %}
+        <form class="" action="." method="post">{% csrf_token %}
+          {{ comment_form|crispy }}
+          <input type="hidden" name="parent_id" value="{{ comment.id }}">
+          <input type="submit" name="" value="Reply" class="btn">
+        </form>
+
+        {% else %}
+        <p class="login-required">You must login to comment.</p>
+        {% endif %}
+      </div>
+      </blockquote>
+
+      <hr>
+      {% endfor %}
+    </div>
+    <!--<p><div style=""data-width="600px" class="fb-comments" data-href="{{ request.build.get_absolute_url }}" data-numposts="5"></div></p> -->
+  </div>
+  </div>
+{% endblock content %}

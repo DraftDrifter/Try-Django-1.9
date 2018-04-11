@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block head_extra %}
+  {{ form.media }}
+  {% load static %}
+{% endblock %}
+
+{% block content %}
+<div class="col-sm-7 mx-auto">
+    <h1>Form</h1>
+    <form class="post-create-form" action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form|crispy}}
+      <label for="id_image" id="upload-btn" class="btn">Upload</label><br>
+      <input class="btn" type="submit" value="Create Post">
+    </form>
+  </div>
+
+
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+
+{% endblock content %}

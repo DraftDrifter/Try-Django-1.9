@@ -1,0 +1,30 @@
+
+.img-thumbnail {
+  margin-bottom: 2%;
+}
+
+.timestamp {
+  font-size: 60%;
+}
+
+.img-fluid {
+  width: 100%;
+  height: auto !important;
+}
+
+.post-create-form input[type="file"] {
+  display: none;
+}
+
+#upload-btn {
+  margin-bottom: 1em;
+  background-color: #dddddd;
+}
+
+.post-create-form #div_id_image {
+  margin:0;
+}
+
+.comment-reply {
+  display: none;
+}
